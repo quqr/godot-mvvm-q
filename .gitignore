@@ -1,0 +1,7 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+/ViewSourceGenerators/ViewSourceGenerators/obj
+*.uid
+/ViewSourceGenerators/ViewSourceGenerators/bin
+readme.md

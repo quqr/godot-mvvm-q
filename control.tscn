@@ -1,0 +1,461 @@
+[gd_scene load_steps=33 format=3 uid="uid://geca5ihv8sq7"]
+
+[ext_resource type="Script" uid="uid://bavitw6n6xkv0" path="res://TestView.cs" id="1_0fbet"]
+[ext_resource type="Script" uid="uid://d2bgdtyh177qu" path="res://TestModel.cs" id="2_ee4bf"]
+[ext_resource type="Script" uid="uid://bmv7d48g7l8pf" path="res://BindingData.cs" id="3_qtu10"]
+[ext_resource type="Script" uid="uid://clp1hcj2mramy" path="res://BindingDataList.cs" id="4_ee4bf"]
+
+[sub_resource type="Resource" id="Resource_b3rfh"]
+script = ExtResource("2_ee4bf")
+_redValue = 0.0
+_greenValue = 0.0
+_blueValue = 0.0
+_alphaValue = 1.0
+_color = Color(1, 0.133333, 0.509804, 1)
+_text = ""
+sliderMinValue = 0.0
+sliderMaxValue = 1.0
+sliderValue = 0.5
+metadata/_custom_type_script = "uid://d2bgdtyh177qu"
+
+[sub_resource type="Resource" id="Resource_sky72"]
+script = ExtResource("3_qtu10")
+BindingMode = 1
+ControlSource = "color"
+ModelSource = "Color"
+SourceType = "Color"
+Event = ""
+EventArgs = ""
+EventArgsType = ""
+Command = ""
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_3ag6a"]
+script = ExtResource("3_qtu10")
+BindingMode = 0
+ControlSource = ""
+ModelSource = ""
+SourceType = ""
+Event = "mouse_entered"
+EventArgs = ""
+EventArgsType = ""
+Command = "ChangeRandomColor"
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_0ytqx"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_sky72"), SubResource("Resource_3ag6a")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_am1vj"]
+script = ExtResource("3_qtu10")
+BindingMode = 2
+ControlSource = "value"
+ModelSource = "RedValue"
+SourceType = "float"
+Event = "value_changed"
+EventArgs = "val"
+EventArgsType = "float"
+Command = ""
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_iy58a"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_am1vj")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_pxugv"]
+script = ExtResource("3_qtu10")
+BindingMode = 1
+ControlSource = "text"
+ModelSource = "RedValue"
+SourceType = "float"
+Event = ""
+EventArgs = ""
+EventArgsType = ""
+Command = ""
+Converter = "ToString(\"f2\")"
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_eh0v1"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_pxugv")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_ee4bf"]
+script = ExtResource("3_qtu10")
+BindingMode = 2
+ControlSource = "value"
+ModelSource = "GreenValue"
+SourceType = "float"
+Event = "value_changed"
+EventArgs = "val"
+EventArgsType = ""
+Command = ""
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_kbped"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_ee4bf")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_fj5cn"]
+script = ExtResource("3_qtu10")
+BindingMode = 1
+ControlSource = "text"
+ModelSource = "GreenValue"
+SourceType = "float"
+Event = ""
+EventArgs = ""
+EventArgsType = ""
+Command = ""
+Converter = "ToString(\"f2\")"
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_6a6wx"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_fj5cn")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_g31lc"]
+script = ExtResource("3_qtu10")
+BindingMode = 2
+ControlSource = "value"
+ModelSource = "BlueValue"
+SourceType = "float"
+Event = "value_changed"
+EventArgs = "val"
+EventArgsType = "float"
+Command = ""
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_knq72"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_g31lc")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_xvdhi"]
+script = ExtResource("3_qtu10")
+BindingMode = 1
+ControlSource = "text"
+ModelSource = "BlueValue"
+SourceType = "float"
+Event = ""
+EventArgs = ""
+EventArgsType = ""
+Command = ""
+Converter = "ToString(\"f2\")"
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_oq4si"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_xvdhi")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_m4egf"]
+script = ExtResource("3_qtu10")
+BindingMode = 2
+ControlSource = "value"
+ModelSource = "AlphaValue"
+SourceType = "float"
+Event = "value_changed"
+EventArgs = "val"
+EventArgsType = "float"
+Command = ""
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_pi4e7"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_m4egf")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_kuuv8"]
+script = ExtResource("3_qtu10")
+BindingMode = 1
+ControlSource = "text"
+ModelSource = "AlphaValue"
+SourceType = "float"
+Event = ""
+EventArgs = ""
+EventArgsType = ""
+Command = ""
+Converter = "ToString(\"f2\")"
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_ou021"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_kuuv8")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_3fl80"]
+script = ExtResource("3_qtu10")
+BindingMode = 0
+ControlSource = ""
+ModelSource = ""
+SourceType = ""
+Event = "pressed"
+EventArgs = ""
+EventArgsType = ""
+Command = "ResetColor"
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_8jbwv"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_3fl80")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_v61lp"]
+script = ExtResource("3_qtu10")
+BindingMode = 0
+ControlSource = ""
+ModelSource = ""
+SourceType = ""
+Event = "pressed"
+EventArgs = ""
+EventArgsType = ""
+Command = "ChangeRedColor"
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_dgp6r"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_v61lp")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_858bn"]
+script = ExtResource("3_qtu10")
+BindingMode = 0
+ControlSource = ""
+ModelSource = ""
+SourceType = ""
+Event = "pressed"
+EventArgs = ""
+EventArgsType = ""
+Command = "ChangeGreenColor"
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_2pj6v"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_858bn")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[sub_resource type="Resource" id="Resource_w5605"]
+script = ExtResource("3_qtu10")
+BindingMode = 0
+ControlSource = ""
+ModelSource = ""
+SourceType = ""
+Event = "toggled"
+EventArgs = "var"
+EventArgsType = "bool"
+Command = "ChangeBlueColor"
+Converter = ""
+metadata/_custom_type_script = "uid://bmv7d48g7l8pf"
+
+[sub_resource type="Resource" id="Resource_87wg0"]
+script = ExtResource("4_ee4bf")
+BindingData = Array[Object]([SubResource("Resource_w5605")])
+metadata/_custom_type_script = "uid://clp1hcj2mramy"
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0fbet")
+Model = SubResource("Resource_b3rfh")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="#ColorRect" type="ColorRect" parent="HBoxContainer/VBoxContainer2/HBoxContainer"]
+editor_description = "color<=Color:Color"
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/binding = "color<=Color:Color"
+metadata/q = SubResource("Resource_0ytqx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="#R" type="HSlider" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.01
+metadata/q = SubResource("Resource_iy58a")
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "R"
+metadata/type = "string"
+metadata/binding = "Text<=>Text:string"
+
+[node name="#RV" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+editor_description = "text<=RedValue:float
+converter:ToString(\"0.00\")"
+layout_mode = 2
+size_flags_horizontal = 4
+text = "0"
+metadata/q = SubResource("Resource_eh0v1")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="#G" type="HSlider" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer2"]
+editor_description = "Value<=>GreenValue:float
+event:value_changed
+args:val"
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.01
+metadata/q = SubResource("Resource_kbped")
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "G"
+
+[node name="#GV" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+editor_description = "text<=GreenValue:float
+converter:ToString(\"f2\")"
+layout_mode = 2
+size_flags_horizontal = 4
+text = "0"
+metadata/binding = "text<=GreenValue:float"
+metadata/converter = "ToString(\"f2\")"
+metadata/q = SubResource("Resource_6a6wx")
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="#B" type="HSlider" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer3"]
+editor_description = "Value<=>BlueValue:float
+event:value_changed
+args:val"
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.01
+metadata/binding = "Value<=>BlueValue:float"
+metadata/event = "value_changed"
+metadata/args = "val"
+metadata/q = SubResource("Resource_knq72")
+
+[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "B"
+
+[node name="#BV" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+editor_description = "text<=BlueValue:float
+converter:ToString(\"f2\")"
+layout_mode = 2
+size_flags_horizontal = 4
+text = "0"
+metadata/binding = "text<=BlueValue:float"
+metadata/converter = "ToString(\"f2\")"
+metadata/q = SubResource("Resource_oq4si")
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="#A" type="HSlider" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer4"]
+editor_description = "Value<=>AlphaValue:float
+event:value_changed
+args:val"
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_value = 1.0
+step = 0.01
+metadata/q = SubResource("Resource_pi4e7")
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "A"
+
+[node name="#AV" type="Label" parent="HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+editor_description = "text<=AlphaValue:float
+converter:ToString(\"f2\")"
+layout_mode = 2
+size_flags_horizontal = 4
+text = "0"
+metadata/binding = "text<=AlphaValue:float"
+metadata/converter = "ToString(\"f2\")"
+metadata/q = SubResource("Resource_ou021")
+
+[node name="#ResetButton" type="Button" parent="HBoxContainer/VBoxContainer2"]
+editor_description = "cmd:ResetColor
+event:pressed"
+layout_mode = 2
+text = "Reset"
+metadata/cmd = "ResetColor"
+metadata/event = "pressed"
+metadata/q = SubResource("Resource_8jbwv")
+
+[node name="#ResetButton2" type="Button" parent="HBoxContainer/VBoxContainer2"]
+editor_description = "cmd:ChangeRedColor
+event:pressed"
+layout_mode = 2
+text = "RED"
+metadata/event = "pressed"
+metadata/cmd = "ChangeRedColor"
+metadata/q = SubResource("Resource_dgp6r")
+
+[node name="#ResetButton3" type="Button" parent="HBoxContainer/VBoxContainer2"]
+editor_description = "cmd:ChangeGreenColor
+event:pressed"
+layout_mode = 2
+text = "GREEN"
+metadata/cmd = "ChangeGreenColor"
+metadata/event = "pressed"
+metadata/q = SubResource("Resource_2pj6v")
+
+[node name="#ResetButton4" type="CheckButton" parent="HBoxContainer/VBoxContainer2"]
+editor_description = "cmd:ChangeBlueColor
+event:toggled
+type:bool
+args:val
+
+"
+layout_mode = 2
+text = "BLUE"
+metadata/q = SubResource("Resource_87wg0")
