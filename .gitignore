@@ -5,3 +5,8 @@
 *.uid
 /ViewSourceGenerators/ViewSourceGenerators/bin
 readme.md
+/.idea
+/.idea
+/.idea/.idea.MVVM
+/.idea/.idea.MVVM/.idea
+.idea/.idea.MVVM/.idea/workspace.xml
