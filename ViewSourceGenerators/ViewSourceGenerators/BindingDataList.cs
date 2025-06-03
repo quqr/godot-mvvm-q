@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ViewSourceGenerators;
+namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
 
 public class BindingDataList
 {

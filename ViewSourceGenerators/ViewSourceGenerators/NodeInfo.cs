@@ -1,9 +1,10 @@
-namespace ViewSourceGenerators;
+namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
 
 public class NodeInfo
 {
-	private string _nodeName = string.Empty;
-	private string _parent   = ".";
+	private string _nodeName          = string.Empty;
+	private string _nodeNameWithSharp = string.Empty;
+	private string _parent            = ".";
 
 	public string NodeName
 	{
@@ -15,8 +16,7 @@ public class NodeInfo
 		}
 	}
 
-	public  string TypeName { get; set; }
-	private string _nodeNameWithSharp = string.Empty;
+	public string TypeName { get; set; }
 
 	public string Parent
 	{

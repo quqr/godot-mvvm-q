@@ -1,21 +1,21 @@
 [gd_scene load_steps=33 format=3 uid="uid://geca5ihv8sq7"]
 
-[ext_resource type="Script" uid="uid://bavitw6n6xkv0" path="res://TestView.cs" id="1_0fbet"]
-[ext_resource type="Script" uid="uid://d2bgdtyh177qu" path="res://TestModel.cs" id="2_ee4bf"]
-[ext_resource type="Script" uid="uid://bmv7d48g7l8pf" path="res://BindingData.cs" id="3_qtu10"]
-[ext_resource type="Script" uid="uid://clp1hcj2mramy" path="res://BindingDataList.cs" id="4_ee4bf"]
+[ext_resource type="Script" uid="uid://bavitw6n6xkv0" path="res://Test/TestView.cs" id="1_0fbet"]
+[ext_resource type="Script" uid="uid://d2bgdtyh177qu" path="res://Test/TestModel.cs" id="2_ee4bf"]
+[ext_resource type="Script" uid="uid://bmv7d48g7l8pf" path="res://Scripts/MVVM/BindingData.cs" id="3_qtu10"]
+[ext_resource type="Script" uid="uid://clp1hcj2mramy" path="res://Scripts/MVVM/BindingDataList.cs" id="4_ee4bf"]
 
 [sub_resource type="Resource" id="Resource_b3rfh"]
 script = ExtResource("2_ee4bf")
-_redValue = 0.0
-_greenValue = 0.0
-_blueValue = 0.0
 _alphaValue = 1.0
-_color = Color(1, 0.133333, 0.509804, 1)
+_blueValue = 0.0
+_color = Color(1, 0.313726, 0.603922, 1)
+_greenValue = 0.0
+_redValue = 0.0
+_sliderMaxValue = 0.0
+_sliderMinValue = 0.0
+_sliderValue = 0.0
 _text = ""
-sliderMinValue = 0.0
-sliderMaxValue = 1.0
-sliderValue = 0.5
 metadata/_custom_type_script = "uid://d2bgdtyh177qu"
 
 [sub_resource type="Resource" id="Resource_sky72"]

@@ -2,10 +2,11 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace ViewSourceGenerators;
+namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
 
 public class BindingData
 {
+	private string      _converter;
 	public  BindingMode BindingMode   { get; set; }
 	public  string      ViewSource    { get; set; }
 	public  string      ModelSource   { get; set; }
@@ -14,17 +15,13 @@ public class BindingData
 	public  string      EventArgs     { get; set; }
 	public  string      EventArgsType { get; set; }
 	public  string      Command       { get; set; }
-	private string      _converter;
 
 	public string Converter
 	{
 		get => _converter;
 		set
 		{
-			if (!string.IsNullOrEmpty(value))
-			{
-				_converter = $".{value.Replace("\\", "")}";
-			}
+			if (!string.IsNullOrEmpty(value)) _converter = $".{value.Replace("\\", "")}";
 		}
 	}
 }
@@ -43,10 +40,7 @@ public static class BindingsDataExtensions
 #pragma warning restore RS1035
 
 		// 首字母大写后拼接
-		for (int i = 0; i < words.Length; i++)
-		{
-			words[i] = textInfo.ToTitleCase(words[i].ToLower());
-		}
+		for (var i = 0; i < words.Length; i++) words[i] = textInfo.ToTitleCase(words[i].ToLower());
 
 		return string.Concat(words);
 	}
@@ -56,7 +50,7 @@ public static class BindingsDataExtensions
 		if (string.IsNullOrEmpty(input)) return input;
 
 		// 在大写字母前插入下划线，处理连续大写（如 "XML" → "_x_m_l"）
-		string intermediate = Regex.Replace(input, "(?<!^)([A-Z])", "_$1");
+		var intermediate = Regex.Replace(input, "(?<!^)([A-Z])", "_$1");
 		// 转换为全小写并合并
 		return intermediate.ToLower().Replace("__", "_").Trim('_');
 	}

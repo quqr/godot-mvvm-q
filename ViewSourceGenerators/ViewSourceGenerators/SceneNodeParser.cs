@@ -7,20 +7,11 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ViewSourceGenerators;
+namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
 
 [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:不要使用禁用于分析器的 API")]
 public static class SceneNodeParser
 {
-	public static SourceProductionContext Context;
-	public static ClassDeclarationSyntax  ClassDecl;
-
-	private static readonly Regex NodeHeaderRegex        = new(NodeHeaderPattern, RegexOptions.Compiled);
-	private static readonly Regex MetaDataRegex          = new(MetaDataRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceHeaderRegex    = new(ResourceHeaderRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceDataRegex      = new(ResourceDataRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceArrayDataRegex = new(ResourceArrayDataRegexStr, RegexOptions.Compiled);
-
 	private const string NodeHeaderPattern =
 		"""
 		\[node\s+name\s*=\s*"([^"]+)"\s+type\s*=\s*"([^"]*)"(?:\s+parent\s*=\s*"([^"]*)")?\]?
@@ -45,6 +36,15 @@ public static class SceneNodeParser
 		"""
 		SubResource\((\"[^"]+\")\)
 		""";
+
+	public static SourceProductionContext Context;
+	public static ClassDeclarationSyntax  ClassDecl;
+
+	private static readonly Regex NodeHeaderRegex        = new(NodeHeaderPattern, RegexOptions.Compiled);
+	private static readonly Regex MetaDataRegex          = new(MetaDataRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceHeaderRegex    = new(ResourceHeaderRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceDataRegex      = new(ResourceDataRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceArrayDataRegex = new(ResourceArrayDataRegexStr, RegexOptions.Compiled);
 
 	private static readonly Dictionary<string, Dictionary<string, string>> Resources = [];
 
@@ -95,16 +95,13 @@ public static class SceneNodeParser
 				continue;
 			}
 
-			if (!nodeMatch.Groups[1].Value.Contains('#'))
-			{
-				continue;
-			}
+			if (!nodeMatch.Groups[1].Value.Contains('#')) continue;
 
 			var nodeInfo = new NodeInfo
 			{
 				NodeName = nodeMatch.Groups[1].Value.Trim('"'),
 				TypeName = nodeMatch.Groups[2].Value.Trim('"'),
-				Parent   = nodeMatch.Groups[3].Value.Trim('"'),
+				Parent   = nodeMatch.Groups[3].Value.Trim('"')
 			};
 			if (nodeInfoDict.ContainsKey(nodeInfo.NodeName))
 			{
@@ -131,9 +128,7 @@ public static class SceneNodeParser
 			//var dataMatch = Regex.Matches(subResource.Value, ResourceArrayDataRegexStr);
 			var dataMatch = ResourceArrayDataRegex.Matches(subResource.Value);
 			foreach (Match data in dataMatch)
-			{
 				bindingDataList.BindingData.Add(ParseBindingData(Resources[data.Groups[1].Value.Trim('"')]));
-			}
 		}
 
 
@@ -144,7 +139,6 @@ public static class SceneNodeParser
 	{
 		var bindingData = new BindingData();
 		foreach (var subResource in subResources)
-		{
 			switch (subResource.Key)
 			{
 				case "BindingMode":
@@ -177,7 +171,6 @@ public static class SceneNodeParser
 				default:
 					continue;
 			}
-		}
 
 		return bindingData;
 	}

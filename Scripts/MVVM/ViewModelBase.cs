@@ -1,27 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.Input;
 using Godot;
 
-namespace MVVM;
+namespace MVVM.Scripts.MVVM;
 
 public class ViewModelBase
 {
-	public ModelBase Model { get; set; } = new();
+	public ViewModelBase(ModelBase modelBase)
+	{
+		modelBase.Initialize();
+		WeakModel           = new WeakReference<ModelBase>(modelBase);
+		modelBase.ViewModel = new WeakReference<ViewModelBase>(this);
+	}
+
+	private WeakReference<ModelBase> WeakModel { get; }
+
+	protected ModelBase? Model => WeakModel.TryGetTarget(out var model) ? model : null;
 
 	public void Bind<T>(string bindingPropertyName, Action<T> action)
 	{
 		if (!Model.Properties.ContainsKey(bindingPropertyName))
-		{
-#if DEBUG
 			throw new ArgumentException($"Property {bindingPropertyName} not found in Model {Model.GetType().Name}");
-#endif
-			GD.PrintErr($"Property {bindingPropertyName} not found in Model");
-			return;
-		}
 
 		Model.PropertyChanged += (_, args) =>
 		{
-			if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName.Equals(bindingPropertyName))
+			if (!string.IsNullOrEmpty(args.PropertyName) && args.PropertyName.Equals(bindingPropertyName))
 				action.Invoke(GetValue<T>(bindingPropertyName));
 		};
 	}
@@ -68,28 +72,17 @@ public class ViewModelBase
 
 	public T? GetValue<T>(string propertyName)
 	{
-		Model.Properties.TryGetValue(propertyName, out var value);
-		if (value?.GetValue(Model) is T val) return val;
-#if DEBUG
-		throw new ArgumentException($"Property {propertyName} not found in Model {Model.GetType().Name}");
-#endif
-		GD.PrintErr($"Property {propertyName} not found in Model");
-		return default;
+		if (!Model.Properties.TryGetValue(propertyName, out var propertyInfo))
+			throw new KeyNotFoundException($"Property {propertyName} not found in {GetType().Name}");
+		if (propertyInfo.GetMethod?.Invoke(Model, null) is not T value)
+			throw new InvalidCastException($"Property {propertyName} is not of type {typeof(T).Name}");
+		return value;
 	}
 
 	public void SetValue<T>(string propertyName, T value)
 	{
-		Model.Properties.TryGetValue(propertyName, out var property);
-		if (property is not null)
-		{
-			property.SetMethod?.Invoke(Model, [value]);
-		}
-		else
-		{
-#if DEBUG
-			throw new ArgumentException($"Property {propertyName} not found in Model {Model.GetType().Name}");
-#endif
-			GD.PrintErr($"Property {propertyName} not found in Model");
-		}
+		if (!Model.Properties.TryGetValue(propertyName, out var propertyInfo))
+			throw new KeyNotFoundException($"Property {propertyName} not found in {GetType().Name}");
+		propertyInfo.SetMethod?.Invoke(Model, [value]);
 	}
 }

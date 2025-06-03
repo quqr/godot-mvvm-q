@@ -1,47 +1,53 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace ViewSourceGenerators;
+namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
 
 internal class CodeBuilder
 {
-	private readonly StringBuilder _sb        = new();
 	private const    int           IndentSize = 4;
+	private readonly StringBuilder _sb        = new();
 
-	public void AppendHeader(string className)
+	public CodeBuilder AppendHeader(string className, string namespaceName)
 	{
-		_sb.AppendLine("using Godot;");
-		_sb.AppendLine("namespace MVVM;");
-		_sb.AppendLine($"public partial class {className}");
-		_sb.AppendLine("{");
+		_sb.AppendLine("using Godot;")
+		   .AppendLine("using System;")
+		   .AppendLine($"namespace {namespaceName};")
+		   .AppendLine($"public partial class {className}")
+		   .AppendLine("{");
+		return this;
 	}
 
-	public void AppendStart(string indent)
+	public CodeBuilder AppendStart(string indent)
 	{
 		_sb.AppendLine($"{indent}{{");
+		return this;
 	}
 
-	public void AppendEnd(string indent = "")
+	public CodeBuilder AppendEnd(string indent = "")
 	{
 		_sb.AppendLine($"{indent}}}");
+		return this;
 	}
 
-	public void AppendError(string err)
+	public CodeBuilder AppendError(string err)
 	{
 		_sb.AppendLine(err);
+		return this;
 	}
 
-	public void AppendProperties(List<NodeInfo> nodeInfos)
+	public CodeBuilder AppendProperties(List<NodeInfo> nodeInfos)
 	{
 		foreach (var nodeInfo in nodeInfos)
 			_sb.AppendLine(
 				$"{new string(' ', IndentSize)}public {nodeInfo.TypeName} {nodeInfo.NodeName} {{ get; set; }}");
+		return this;
 	}
 
-	public void AppendInitialization(List<NodeInfo> nodeInfos)
+	public CodeBuilder AppendInitialization(List<NodeInfo> nodeInfos)
 	{
-		_sb.AppendLine($"{new string(' ', IndentSize)}public void InitializeComponent()");
-		_sb.AppendLine($"{new string(' ', IndentSize)}{{");
+		_sb.AppendLine($"{new string(' ', IndentSize)}public void InitializeComponent()")
+		   .AppendLine($"{new string(' ', IndentSize)}{{");
 
 		foreach (var nodeInfo in nodeInfos)
 			_sb.AppendLine(
@@ -53,44 +59,46 @@ internal class CodeBuilder
 
 
 		_sb.AppendLine($"{new string(' ', IndentSize)}}}");
+		return this;
 	}
 
-	public void AppendBindingMethods(List<NodeInfo> nodeInfos)
+	public CodeBuilder AppendBindingMethods(List<NodeInfo> nodeInfos)
 	{
 		foreach (var nodeInfo in nodeInfos)
 		{
 			if (nodeInfo.Bindings is null) continue;
-			_sb.AppendLine($"{new string(' ', IndentSize)}private void Bind{nodeInfo.NodeName}()");
-			_sb.AppendLine($"{new string(' ', IndentSize)}{{");
+			_sb.AppendLine($"{new string(' ', IndentSize)}private void Bind{nodeInfo.NodeName}()")
+			   .AppendLine($"{new string(' ', IndentSize)}{{");
 			foreach (var bindingData in nodeInfo.Bindings.BindingData)
-			{
-				AppendBindingLogic(nodeInfo, bindingData);
-				AppendCommandLogic(nodeInfo, bindingData);
-			}
+				AppendBindingLogic(nodeInfo, bindingData)
+				   .AppendCommandLogic(nodeInfo, bindingData);
 
 			_sb.AppendLine($"{new string(' ', IndentSize)}}}");
 		}
+
+		return this;
 	}
 
-	private void AppendCommandLogic(NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendCommandLogic(NodeInfo nodeInfo, BindingData bindingData)
 	{
-		if (string.IsNullOrEmpty(bindingData.Command)) return;
+		if (string.IsNullOrEmpty(bindingData.Command)) return this;
 		var indent = new string(' ', IndentSize * 2);
 		AppendEventBinding(indent, nodeInfo, bindingData, true);
+		return this;
 	}
 
-	private void AppendBindingLogic(NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendBindingLogic(NodeInfo nodeInfo, BindingData bindingData)
 	{
-		if (bindingData.BindingMode == BindingMode.None) return;
+		if (bindingData.BindingMode == BindingMode.None) return this;
 		var indent = new string(' ', IndentSize * 2);
 		AppendStart(indent);
 		indent = new string(' ', IndentSize * 3);
 		_sb.AppendLine(
-			$"{indent}var value = ViewModel.GetValue<{bindingData.SourceType}>(\"{bindingData.ModelSource}\");");
-		_sb.AppendLine(
-			$"{indent}if (value == null){{GD.PrintErr(\" {nodeInfo.NodeName} : {bindingData.ViewSource} binding {bindingData.ModelSource} failed, value is null\"); return;}} ");
-		_sb.AppendLine(
-			$"{indent}{nodeInfo.NodeName}.Set(\"{bindingData.ViewSource}\", Variant.From(value));");
+			    $"{indent}var value = ViewModel.GetValue<{bindingData.SourceType}>(\"{bindingData.ModelSource}\");")
+		   .AppendLine(
+			    $"{indent}if (value == null){{GD.PrintErr(\" {nodeInfo.NodeName} : {bindingData.ViewSource} binding {bindingData.ModelSource} failed, value is null\"); return;}} ")
+		   .AppendLine(
+			    $"{indent}{nodeInfo.NodeName}.Set(\"{bindingData.ViewSource}\", Variant.From(value));");
 		switch (bindingData.BindingMode)
 		{
 			case BindingMode.OneWay:
@@ -111,48 +119,52 @@ internal class CodeBuilder
 
 		indent = new string(' ', IndentSize * 2);
 		AppendEnd(indent);
+		return this;
 	}
 
 	/// <summary>
-	/// not support now
+	///     not support now
 	/// </summary>
-	private void AppendOneWayToSourceBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendOneWayToSourceBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
 	{
 		AppendEventBinding(indent, nodeInfo, bindingData);
+		return this;
 	}
 
-	private void AppendOneWayBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendOneWayBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
 	{
 		_sb.AppendLine(
-			$"{indent}ViewModel.Bind<{bindingData.SourceType}>(\"{bindingData.ModelSource}\", val =>");
-		_sb.AppendLine($"{indent}{{");
-		_sb.AppendLine(
-			$"{indent}    {nodeInfo.NodeName}.Set(\"{bindingData.ViewSource}\", Variant.From(val{bindingData.Converter}));");
-		_sb.AppendLine($"{indent}}});");
+			    $"{indent}ViewModel.Bind<{bindingData.SourceType}>(\"{bindingData.ModelSource}\", val =>")
+		   .AppendLine($"{indent}{{")
+		   .AppendLine(
+			    $"{indent}    {nodeInfo.NodeName}.Set(\"{bindingData.ViewSource}\", Variant.From(val{bindingData.Converter}));")
+		   .AppendLine($"{indent}}});");
+		return this;
 	}
 
-	private void AppendTwoWayBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendTwoWayBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
 	{
-		AppendOneWayBinding(indent, nodeInfo, bindingData);
-		AppendEventBinding(indent, nodeInfo, bindingData);
+		AppendOneWayBinding(indent, nodeInfo, bindingData)
+		   .AppendEventBinding(indent, nodeInfo, bindingData);
+		return this;
 	}
 
-	private void AppendOneTimeBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
+	private CodeBuilder AppendOneTimeBinding(string indent, NodeInfo nodeInfo, BindingData bindingData)
 	{
 		AppendEventBinding(indent, nodeInfo, bindingData);
+		return this;
 	}
 
-	private void AppendEventBinding(string indent, NodeInfo nodeInfo, BindingData bindingData, bool isCommand = false)
+	private CodeBuilder AppendEventBinding(string indent, NodeInfo nodeInfo, BindingData bindingData,
+	                                       bool   isCommand = false)
 	{
 		if (string.IsNullOrEmpty(bindingData.Event))
 		{
 			if (isCommand)
-			{
 				AppendError(
 					$"throw new ArgumentException(\" {nodeInfo.NodeName} : The Event can not be empty when binding Command.\");");
-			}
 
-			return;
+			return this;
 		}
 
 		var args       = string.Empty;
@@ -176,25 +188,19 @@ internal class CodeBuilder
 			}
 		}
 
-		_sb.AppendLine($"{indent}{nodeInfo.NodeName}.Connect(\"{bindingData.Event}\", Callable.From(({args}) =>");
-		_sb.AppendLine($"{indent}{{");
+		_sb.AppendLine($"{indent}{nodeInfo.NodeName}.Connect(\"{bindingData.Event}\", Callable.From(({args}) =>")
+		   .AppendLine($"{indent}{{");
 		var arg = ignoreArgs ? $"{nodeInfo.NodeName}.{bindingData.ViewSource}" : "val";
 		if (isCommand)
 		{
 			if (!arg.Equals("val"))
-			{
 				_sb.AppendLine(
 					$"{indent}    ViewModel.ExecuteCommand(\"{bindingData.Command}Command\");");
-			}
 			else if (!string.IsNullOrEmpty(bindingData.EventArgsType))
-			{
 				_sb.AppendLine(
 					$"{indent}    ViewModel.ExecuteCommand<{bindingData.EventArgsType}>(\"{bindingData.Command}Command\", {arg});");
-			}
 			else
-			{
 				AppendError($"throw new ArgumentException(\"{nodeInfo.NodeName} : EventArgsType can not be empty.\");");
-			}
 		}
 		else
 		{
@@ -203,6 +209,7 @@ internal class CodeBuilder
 		}
 
 		_sb.AppendLine($"{indent}}}));");
+		return this;
 	}
 
 	public override string ToString()

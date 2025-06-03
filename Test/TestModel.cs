@@ -1,24 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Godot;
+using MVVM.Scripts.MVVM;
 
-namespace MVVM;
+namespace MVVM.Test;
 
 [GlobalClass]
 public partial class TestModel : ModelBase
 {
-	[ObservableProperty] [Export] private float  _redValue;
-	[ObservableProperty] [Export] private float  _greenValue;
-	[ObservableProperty] [Export] private float  _blueValue;
 	[ObservableProperty] [Export] private float  _alphaValue = 1;
+	[ObservableProperty] [Export] private float  _blueValue;
 	[ObservableProperty] [Export] private Color  _color;
+	[ObservableProperty] [Export] private float  _greenValue;
+	[ObservableProperty] [Export] private float  _redValue;
+	[ObservableProperty] [Export] private float  _sliderMaxValue;
+	[ObservableProperty] [Export] private float  _sliderMinValue;
+	[ObservableProperty] [Export] private float  _sliderValue;
 	[ObservableProperty] [Export] private string _text;
-	[ObservableProperty] [Export] private float  sliderMinValue;
-	[ObservableProperty] [Export] private float  sliderMaxValue;
-	[ObservableProperty] [Export] private float  sliderValue;
 
 	[RelayCommand]
-	void ChangeRandomColor()
+	private void ChangeRandomColor()
 	{
 		RedValue   = (float)GD.RandRange(.0, 1.0);
 		GreenValue = (float)GD.RandRange(.0, 1.0);
@@ -26,13 +27,13 @@ public partial class TestModel : ModelBase
 	}
 
 	[RelayCommand]
-	void MouseEnteredColorRect()
+	private void MouseEnteredColorRect()
 	{
 		Color = Colors.Aquamarine;
 	}
 
 	[RelayCommand]
-	void MouseExitedColorRect()
+	private void MouseExitedColorRect()
 	{
 		Color = new Color(RedValue, GreenValue, BlueValue, AlphaValue);
 	}
@@ -102,7 +103,7 @@ public partial class TestModel : ModelBase
 	}
 
 	[RelayCommand]
-	void MouseEntered()
+	private void MouseEntered()
 	{
 		GD.Print("Hello!");
 	}

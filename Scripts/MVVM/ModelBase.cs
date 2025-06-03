@@ -1,18 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Godot;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Godot;
 
-namespace MVVM;
+namespace MVVM.Scripts.MVVM;
 
 [INotifyPropertyChanged]
 [GlobalClass]
 public partial class ModelBase : Resource
 {
+	public WeakReference<ViewModelBase>     ViewModel;
 	public Dictionary<string, PropertyInfo> Properties { get; private set; } = [];
 
-	public void Initialize()
+	public virtual void Initialize()
 	{
 		Properties = GetType()
 		            .GetProperties()

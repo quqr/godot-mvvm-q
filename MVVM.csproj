@@ -27,7 +27,4 @@
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false"/>
     </ItemGroup>
-    <ItemGroup>
-        <Content Include="readme.md"/>
-    </ItemGroup>
 </Project>
