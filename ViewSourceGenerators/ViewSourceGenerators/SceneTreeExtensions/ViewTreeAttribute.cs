@@ -2,16 +2,13 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
+namespace ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class ViewTreeAttribute : Attribute
 {
-	public ViewTreeAttribute(
-		string                  tscnRelativeToClassPath = null,
-		bool                    traverseInstancedScenes = false,
-		string                  root                    = "_",
-		[CallerFilePath] string classPath               = null)
+	public ViewTreeAttribute(string tscnRelativeToClassPath = null, bool traverseInstancedScenes = false,
+	                         string root                    = "_",  [CallerFilePath] string classPath = null)
 	{
 		SceneFile = tscnRelativeToClassPath is null
 			? Path.ChangeExtension(classPath, "tscn")

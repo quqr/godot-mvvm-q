@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
+namespace KW.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
 
 public static class SymbolExtensions
 {
@@ -24,9 +24,7 @@ public static class SymbolExtensions
 		GetNamespaceDeclaration(this ISymbol symbol, string indent = "    ")
 	{
 		var ns = symbol.NamespaceOrNull();
-		return ns is null
-			? (null, null, null)
-			: ($"namespace {ns}\n{{\n", "}\n", indent);
+		return ns is null ? (null, null, null) : ($"namespace {ns}\n{{\n", "}\n", indent);
 	}
 
 	public static INamedTypeSymbol OuterType(this ISymbol symbol)
@@ -41,11 +39,11 @@ public static class SymbolExtensions
 
 	public static string ClassPath(this INamedTypeSymbol symbol)
 	{
-		return symbol.DeclaringSyntaxReferences.FirstOrDefault()?.SyntaxTree?.FilePath;
+		return symbol.DeclaringSyntaxReferences.AsEnumerable().FirstOrDefault()?.SyntaxTree?.FilePath;
 	}
 
 	public static string GeneratePartialClass(this INamedTypeSymbol symbol, IEnumerable<string> content,
-	                                          IEnumerable<string>   usings = null)
+	                                          IEnumerable<string>?  usings = null)
 	{
 		var (nsOpen, nsClose, nsIndent) = symbol.GetNamespaceDeclaration();
 

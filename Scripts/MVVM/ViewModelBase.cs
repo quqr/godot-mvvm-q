@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using CommunityToolkit.Mvvm.Input;
 using Godot;
 
-namespace MVVM.Scripts.MVVM;
+namespace MVVM;
 
 public class ViewModelBase
 {
-	public ViewModelBase(ModelBase modelBase)
+	public ViewModelBase(ModelBase modelBase, ViewBase viewBase)
 	{
 		modelBase.Initialize();
-		WeakModel           = new WeakReference<ModelBase>(modelBase);
-		modelBase.ViewModel = new WeakReference<ViewModelBase>(this);
+		Model = modelBase;
+		View  = viewBase;
 	}
 
-	private WeakReference<ModelBase> WeakModel { get; }
+	public ModelBase Model { get; set; }
+	public ViewBase  View  { get; set; }
 
-	protected ModelBase? Model => WeakModel.TryGetTarget(out var model) ? model : null;
-
-	public void Bind<T>(string bindingPropertyName, Action<T> action)
+	public virtual void Bind<T>(string bindingPropertyName, Action<T> action)
 	{
 		if (!Model.Properties.ContainsKey(bindingPropertyName))
 			throw new ArgumentException($"Property {bindingPropertyName} not found in Model {Model.GetType().Name}");
@@ -30,19 +29,12 @@ public class ViewModelBase
 		};
 	}
 
-	public void ExecuteCommand(string commandName)
+	public virtual void ExecuteCommand(string commandName)
 	{
 		if (Model.Properties.TryGetValue(commandName, out var method))
 		{
-			var resetButtonCommand = method.GetValue(Model) as IRelayCommand;
-			try
-			{
-				resetButtonCommand?.Execute(null);
-			}
-			catch (Exception e)
-			{
-				GD.PrintErr($"Error executing command {commandName}: {e.Message}");
-			}
+			var command = method.GetValue(Model) as IRelayCommand;
+			command?.Execute(null);
 		}
 		else
 		{
@@ -50,19 +42,12 @@ public class ViewModelBase
 		}
 	}
 
-	public void ExecuteCommand<T>(string commandName, T? commandParameter)
+	public virtual void ExecuteCommand<T>(string commandName, T? commandParameter)
 	{
 		if (Model.Properties.TryGetValue(commandName, out var method))
 		{
-			var resetButtonCommand = (IRelayCommand<T>)method.GetValue(Model);
-			try
-			{
-				resetButtonCommand?.Execute(commandParameter);
-			}
-			catch (Exception e)
-			{
-				GD.PrintErr($"Error executing command {commandName}: {e.Message}");
-			}
+			var command = (IRelayCommand<T>)method.GetValue(Model);
+			command?.Execute(commandParameter);
 		}
 		else
 		{
@@ -70,7 +55,7 @@ public class ViewModelBase
 		}
 	}
 
-	public T? GetValue<T>(string propertyName)
+	public virtual T? GetValue<T>(string propertyName)
 	{
 		if (!Model.Properties.TryGetValue(propertyName, out var propertyInfo))
 			throw new KeyNotFoundException($"Property {propertyName} not found in {GetType().Name}");
@@ -79,7 +64,7 @@ public class ViewModelBase
 		return value;
 	}
 
-	public void SetValue<T>(string propertyName, T value)
+	public virtual void SetValue<T>(string propertyName, T value)
 	{
 		if (!Model.Properties.TryGetValue(propertyName, out var propertyInfo))
 			throw new KeyNotFoundException($"Property {propertyName} not found in {GetType().Name}");

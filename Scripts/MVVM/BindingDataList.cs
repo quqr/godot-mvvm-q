@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace MVVM.Scripts.MVVM;
+namespace KW.Scripts.MVVM;
 
 [GlobalClass]
 public partial class BindingDataList : Resource

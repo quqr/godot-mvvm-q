@@ -1,4 +1,4 @@
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
+namespace ViewSourceGenerators.ViewSourceGenerators;
 
 public class NodeInfo
 {

@@ -27,4 +27,10 @@
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false"/>
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="README.md" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="README\" />
+    </ItemGroup>
 </Project>

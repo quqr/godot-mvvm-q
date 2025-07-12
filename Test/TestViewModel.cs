@@ -1,7 +1,8 @@
-﻿using MVVM.Scripts.MVVM;
+﻿namespace MVVM.Test;
 
-namespace MVVM.Test;
-
-public class TestViewModel(ModelBase modelBase) : ViewModelBase(modelBase)
+public class TestViewModel : ViewModelBase
 {
+	public TestViewModel(ModelBase modelBase, ViewBase viewBase) : base(modelBase, viewBase)
+	{
+	}
 }

@@ -1,9 +1,9 @@
 using System.Reflection;
 using Godot;
-using MVVM.ViewSourceGenerators.ViewSourceGenerators;
-using MVVM.ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
+using ViewSourceGenerators.ViewSourceGenerators;
+using ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
 
-namespace MVVM.Scripts.MVVM;
+namespace MVVM;
 
 public partial class ViewBase : Node
 {
@@ -12,12 +12,17 @@ public partial class ViewBase : Node
 
 	protected void DebugSourceGenerator()
 	{
-		var path        = GetType().GetCustomAttribute<ViewTreeAttribute>().SceneFile;
+		var path        = GetType().GetCustomAttribute<ViewTreeAttribute>()!.SceneFile;
 		var codeBuilder = new CodeBuilder();
-		var nodeInfos   = SceneNodeParser.Parse(path);
-		if (nodeInfos is null) return;
+		var (nodeInfos, error) = SceneNodeParser.Parse(path);
+		if (nodeInfos is null)
+		{
+			GD.Print(error);
+			return;
+		}
+
 		var typeName = GetType().Name;
-		codeBuilder.AppendHeader(typeName, GetType().Namespace);
+		codeBuilder.AppendHeader(typeName, GetType().Namespace!);
 		codeBuilder.AppendProperties(nodeInfos);
 		codeBuilder.AppendInitialization(nodeInfos);
 		codeBuilder.AppendBindingMethods(nodeInfos);

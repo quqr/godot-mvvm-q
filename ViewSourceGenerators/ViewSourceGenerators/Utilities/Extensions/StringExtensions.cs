@@ -1,30 +1,29 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
+namespace KW.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
 
 internal static class StringExtensions
 {
-	private const string SplitRegexStr = "[ _-]+|(?<=[a-z])(?=[A-Z])";
+	private const string GAS_SPLIT_REGEX_STR = "[ _-]+|(?<=[a-z])(?=[A-Z])";
 
-	private const string UnsafeCharsRegexStr = @"[^\w]+";
+	private const string GAS_UNSAFE_CHARS_REGEX_STR = @"[^\w]+";
 
-	private const           string UnsafeFirstCharRegexStr = "^[^a-zA-Z_]+";
-	private static readonly Regex SplitRegex = new(SplitRegexStr, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+	private const string GAS_UNSAFE_FIRST_CHAR_REGEX_STR = "^[^a-zA-Z_]+";
+
+	private static readonly Regex SplitRegex =
+		new(GAS_SPLIT_REGEX_STR, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 	private static readonly Regex UnsafeCharsRegex =
-		new(UnsafeCharsRegexStr, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+		new(GAS_UNSAFE_CHARS_REGEX_STR, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 	private static readonly Regex UnsafeFirstCharRegex =
-		new(UnsafeFirstCharRegexStr, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+		new(GAS_UNSAFE_FIRST_CHAR_REGEX_STR, RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 	public static string ToTitleCase(this string source)
 	{
 		return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(SplitRegex.Replace(source, " ").ToLower());
 	}
-
-	//public static string ToSafeName(this string source)
-	//    => source.ToTitleCase().Replace(" ", "");
 
 	public static string ToSafeName(this string source)
 	{

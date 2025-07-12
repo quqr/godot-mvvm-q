@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators.Utilities;
+namespace KW.ViewSourceGenerators.ViewSourceGenerators.Utilities;
 
 internal static class Log
 {
@@ -110,9 +110,7 @@ internal static class Log
 	private static string Format(this TimeSpan value, string noTimeStr = "0ms")
 	{
 		var timeStr = value.ToString("d'.'hh':'mm':'ss'.'fff'ms'").TrimStart('0', ':', '.');
-		return timeStr == "ms"       ? noTimeStr
-			: !timeStr.Contains(".") ? $".{timeStr}"
-			                           : timeStr;
+		return timeStr == "ms" ? noTimeStr : !timeStr.Contains(".") ? $".{timeStr}" : timeStr;
 	}
 
 	private static void Print(string msg)

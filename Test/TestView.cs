@@ -1,5 +1,4 @@
-using MVVM.Scripts.MVVM;
-using MVVM.ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
+using ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
 
 namespace MVVM.Test;
 
@@ -8,8 +7,7 @@ public partial class TestView : ViewBase
 {
 	public override void _Ready()
 	{
-		ViewModel = new TestViewModel(Model);
-		InitializeComponent();
+		InitializeComponent(new TestViewModel(Model, this));
 		//DebugSourceGenerator();
 	}
 }

@@ -4,38 +4,37 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using KW.ViewSourceGenerators.ViewSourceGenerators.Utilities;
+using KW.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using MVVM.ViewSourceGenerators.ViewSourceGenerators.Utilities;
-using MVVM.ViewSourceGenerators.ViewSourceGenerators.Utilities.Extensions;
 using GeneratorContext = Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
+namespace ViewSourceGenerators.ViewSourceGenerators;
 
 public abstract class
 	SourceGeneratorForDeclaredMemberWithAttribute<TAttribute, TDeclarationSyntax> : IIncrementalGenerator
-	where TAttribute : Attribute
-	where TDeclarationSyntax : MemberDeclarationSyntax
+where TAttribute : Attribute where TDeclarationSyntax : MemberDeclarationSyntax
 {
-	private const           string Ext           = ".g.cs";
-	private const           int    MaxFileLength = 255;
-	private static readonly string attributeType = typeof(TAttribute).Name;
+	private const           string GAS_EXT             = ".g.cs";
+	private const           int    GAS_MAX_FILE_LENGTH = 255;
+	private static readonly string AttributeType       = typeof(TAttribute).Name;
 
 	private static readonly string
-		attributeName = Regex.Replace(attributeType, "Attribute$", "", RegexOptions.Compiled);
+		AttributeName = Regex.Replace(AttributeType, "Attribute$", "", RegexOptions.Compiled);
 
-	private static readonly char[] InvalidFileNameChars = new[]
-	{
+	private static readonly char[] InvalidFileNameChars =
+	[
 		'\"', '<', '>', '|', '\0',
 		(char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10,
 		(char)11, (char)12, (char)13, (char)14, (char)15, (char)16, (char)17, (char)18, (char)19, (char)20,
 		(char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30,
 		(char)31, ':', '*', '?', '\\', '/'
-	};
+	];
 
 	protected virtual IEnumerable<(string Name, string Source)> StaticSources =>
-		Enumerable.Empty<(string Name, string Source)>();
+		[];
 
 	public void Initialize(GeneratorContext context)
 	{
@@ -59,7 +58,7 @@ public abstract class
 				foreach (var attributeList in type.AttributeLists)
 				{
 					foreach (var attribute in attributeList.Attributes)
-						if (attribute.Name.ToString() == attributeName)
+						if (attribute.Name.ToString() == AttributeName)
 							return true;
 				}
 
@@ -83,7 +82,7 @@ public abstract class
 						return;
 					var model     = compilation.GetSemanticModel(node.SyntaxTree);
 					var symbol    = model.GetDeclaredSymbol(Node(node));
-					var attribute = symbol.GetAttributes().SingleOrDefault(x => x.AttributeClass.Name == attributeType);
+					var attribute = symbol.GetAttributes().SingleOrDefault(x => x.AttributeClass.Name == AttributeType);
 					if (attribute is null) continue;
 
 					var (generatedCode, error) =
@@ -91,7 +90,7 @@ public abstract class
 
 					if (generatedCode is null)
 					{
-						var descriptor = new DiagnosticDescriptor(error.Id ?? attributeName, error.Title, error.Message,
+						var descriptor = new DiagnosticDescriptor(error.Id ?? AttributeName, error.Title, error.Message,
 							error.Category                                 ?? "Usage", DiagnosticSeverity.Error, true);
 						var diagnostic = Diagnostic.Create(descriptor,
 							attribute.ApplicationSyntaxReference.GetSyntax().GetLocation());
@@ -110,13 +109,12 @@ public abstract class
 		}
 	}
 
-	protected abstract (string GeneratedCode, DiagnosticDetail Error) GenerateCode(
-		Compilation           compilation, SyntaxNode node, ISymbol symbol, AttributeData attribute,
-		AnalyzerConfigOptions options);
+	protected abstract (string GeneratedCode, DiagnosticDetail Error) GenerateCode(Compilation compilation,
+		SyntaxNode node, ISymbol symbol, AttributeData attribute, AnalyzerConfigOptions options);
 
-	private (string GeneratedCode, DiagnosticDetail Error) _GenerateCode(
-		Compilation           compilation, SyntaxNode node, ISymbol symbol, AttributeData attribute,
-		AnalyzerConfigOptions options)
+	private (string GeneratedCode, DiagnosticDetail Error) _GenerateCode(Compilation compilation, SyntaxNode node,
+	                                                                     ISymbol symbol, AttributeData attribute,
+	                                                                     AnalyzerConfigOptions options)
 	{
 		try
 		{
@@ -136,13 +134,14 @@ public abstract class
 
 	protected virtual string GenerateFilename(ISymbol symbol)
 	{
-		var gn = $"{Format(symbol)}{Ext}";
+		var gn = $"{Format(symbol)}{GAS_EXT}";
 		Log.Debug($"Generated Filename ({gn.Length}): {gn}\n");
 		return gn;
 
 		static string Format(ISymbol symbol)
 		{
-			return string.Join("_", $"{symbol}".Split(InvalidFileNameChars)).Truncate(MaxFileLength - Ext.Length);
+			return string.Join("_", $"{symbol}".Split(InvalidFileNameChars))
+			             .Truncate(GAS_MAX_FILE_LENGTH - GAS_EXT.Length);
 		}
 	}
 

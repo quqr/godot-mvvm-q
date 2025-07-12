@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Godot;
-using MVVM.Scripts.MVVM;
 
 namespace MVVM.Test;
 

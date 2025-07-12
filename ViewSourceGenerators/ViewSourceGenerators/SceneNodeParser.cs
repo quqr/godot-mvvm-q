@@ -4,51 +4,57 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using ViewSourceGenerators.ViewSourceGenerators.SceneTreeExtensions;
 
-namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
+namespace ViewSourceGenerators.ViewSourceGenerators;
 
 [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1035:不要使用禁用于分析器的 API")]
 public static class SceneNodeParser
 {
-	private const string NodeHeaderPattern =
-		"""
-		\[node\s+name\s*=\s*"([^"]+)"\s+type\s*=\s*"([^"]*)"(?:\s+parent\s*=\s*"([^"]*)")?\]?
-		""";
+	private const string GasNodeHeaderPattern = """
+	                                            \[node\s+name\s*=\s*"([^"]+)"\s+type\s*=\s*"([^"]*)"(?:\s+parent\s*=\s*"([^"]*)")?\]?
+	                                            """;
 
-	private const string MetaDataRegexStr =
-		"""
-		^metadata/([\w/]+)\s*=\s*SubResource\((\"[^"]+\")\)
-		""";
+	private const string GasMetaDataRegexStr = """
+	                                           ^metadata/([\w/]+)\s*=\s*SubResource\((\"[^"]+\")\)
+	                                           """;
 
-	private const string ResourceHeaderRegexStr =
-		"""
-		\[sub_resource type="([^"]*)" id="([^"]*)"\]
-		""";
+	private const string GasResourceHeaderRegexStr = """
+	                                                 \[sub_resource type="([^"]*)" id="([^"]*)"\]
+	                                                 """;
 
-	private const string ResourceDataRegexStr =
-		"""
-		^\s*(\w+)\s*=\s*(.*?)\s*$(?=\n^\s*\w+|\n\[|\Z)
-		""";
+	private const string GasResourceDataRegexStr = """
+	                                               ^\s*(\w+)\s*=\s*(.*?)\s*$(?=\n^\s*\w+|\n\[|\Z)
+	                                               """;
 
-	private const string ResourceArrayDataRegexStr =
-		"""
-		SubResource\((\"[^"]+\")\)
-		""";
+	private const string GasResourceArrayDataRegexStr = """
+	                                                    SubResource\((\"[^"]+\")\)
+	                                                    """;
 
-	public static SourceProductionContext Context;
-	public static ClassDeclarationSyntax  ClassDecl;
+	private static readonly Regex NodeHeaderRegex     = new(GasNodeHeaderPattern, RegexOptions.Compiled);
+	private static readonly Regex MetaDataRegex       = new(GasMetaDataRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceHeaderRegex = new(GasResourceHeaderRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceDataRegex   = new(GasResourceDataRegexStr, RegexOptions.Compiled);
 
-	private static readonly Regex NodeHeaderRegex        = new(NodeHeaderPattern, RegexOptions.Compiled);
-	private static readonly Regex MetaDataRegex          = new(MetaDataRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceHeaderRegex    = new(ResourceHeaderRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceDataRegex      = new(ResourceDataRegexStr, RegexOptions.Compiled);
-	private static readonly Regex ResourceArrayDataRegex = new(ResourceArrayDataRegexStr, RegexOptions.Compiled);
+	private static readonly Regex ResourceArrayDataRegex = new(GasResourceArrayDataRegexStr, RegexOptions.Compiled);
 
 	private static readonly Dictionary<string, Dictionary<string, string>> Resources = [];
 
-	public static List<NodeInfo>? Parse(string scenePath)
+	private static readonly Dictionary<string, Action<BindingData, string>> Handlers =
+		new(StringComparer.OrdinalIgnoreCase)
+		{
+			["BindingMode"]   = (bd, v) => bd.BindingMode = (BindingMode)Enum.Parse(typeof(BindingMode), v),
+			["ControlSource"] = (bd, v) => bd.ViewSource = v,
+			["ModelSource"]   = (bd, v) => bd.ModelSource = v,
+			["SourceType"]    = (bd, v) => bd.SourceType = v,
+			["Event"]         = (bd, v) => bd.Event = v,
+			["EventArgs"]     = (bd, v) => bd.EventArgs = v,
+			["EventArgsType"] = (bd, v) => bd.EventArgsType = v,
+			["Command"]       = (bd, v) => bd.Command = v,
+			["Converter"]     = (bd, v) => bd.Converter = v
+		};
+
+	public static (List<NodeInfo>? nodeInfos, DiagnosticDetail Error) Parse(string scenePath)
 	{
 		Dictionary<string, NodeInfo> nodeInfoDict = [];
 		Resources.Clear();
@@ -56,7 +62,6 @@ public static class SceneNodeParser
 		var sceneContent = File.ReadAllLines(scenePath);
 		foreach (var content in sceneContent)
 		{
-			//var resourceMatch = Regex.Match(content, ResourceHeaderRegexStr);
 			var resourceMatch = ResourceHeaderRegex.Match(content);
 			if (resourceMatch.Success)
 			{
@@ -64,7 +69,6 @@ public static class SceneNodeParser
 				continue;
 			}
 
-			//var resourceDataMatch = Regex.Match(content, ResourceDataRegexStr);
 			var resourceDataMatch = ResourceDataRegex.Match(content);
 			if (resourceDataMatch.Success)
 			{
@@ -76,11 +80,9 @@ public static class SceneNodeParser
 				continue;
 			}
 
-			//var nodeMatch = Regex.Match(content, NodeHeaderPattern);
 			var nodeMatch = NodeHeaderRegex.Match(content);
 			if (!nodeMatch.Success)
 			{
-				//var bindingMatch = Regex.Match(content, MetaDataRegexStr);
 				var bindingMatch = MetaDataRegex.Match(content);
 				if (bindingMatch.Success)
 				{
@@ -104,19 +106,13 @@ public static class SceneNodeParser
 				Parent   = nodeMatch.Groups[3].Value.Trim('"')
 			};
 			if (nodeInfoDict.ContainsKey(nodeInfo.NodeName))
-			{
-				Context.ReportDiagnostic(Diagnostic.Create(
-					new DiagnosticDescriptor("MVVM002", "Same name node",
-						"the scene have the same name node", "Usage",
-						DiagnosticSeverity.Error, true), ClassDecl.GetLocation()));
-				return null;
-			}
+				return (null, Diagnostics.SceneExistsSameNameNode(nodeInfo));
 
 			nodeInfoDict.Add(nodeInfo.NodeName, nodeInfo);
 			nodes.Add(nodeInfo);
 		}
 
-		return nodes;
+		return (nodes, null);
 	}
 
 	private static BindingDataList ParseResources(Dictionary<string, string> resource)
@@ -125,7 +121,6 @@ public static class SceneNodeParser
 		foreach (var subResource in resource)
 		{
 			if (!subResource.Key.Equals("BindingData")) continue;
-			//var dataMatch = Regex.Matches(subResource.Value, ResourceArrayDataRegexStr);
 			var dataMatch = ResourceArrayDataRegex.Matches(subResource.Value);
 			foreach (Match data in dataMatch)
 				bindingDataList.BindingData.Add(ParseBindingData(Resources[data.Groups[1].Value.Trim('"')]));
@@ -138,39 +133,10 @@ public static class SceneNodeParser
 	private static BindingData ParseBindingData(Dictionary<string, string> subResources)
 	{
 		var bindingData = new BindingData();
-		foreach (var subResource in subResources)
-			switch (subResource.Key)
-			{
-				case "BindingMode":
-					bindingData.BindingMode = (BindingMode)Enum.Parse(typeof(BindingMode), subResource.Value);
-					break;
-				case "ControlSource":
-					bindingData.ViewSource = subResource.Value;
-					break;
-				case "ModelSource":
-					bindingData.ModelSource = subResource.Value;
-					break;
-				case "SourceType":
-					bindingData.SourceType = subResource.Value;
-					break;
-				case "Event":
-					bindingData.Event = subResource.Value;
-					break;
-				case "EventArgs":
-					bindingData.EventArgs = subResource.Value;
-					break;
-				case "EventArgsType":
-					bindingData.EventArgsType = subResource.Value;
-					break;
-				case "Command":
-					bindingData.Command = subResource.Value;
-					break;
-				case "Converter":
-					bindingData.Converter = subResource.Value;
-					break;
-				default:
-					continue;
-			}
+
+		foreach (var res in subResources)
+			if (Handlers.TryGetValue(res.Key, out var handler))
+				handler(bindingData, res.Value);
 
 		return bindingData;
 	}

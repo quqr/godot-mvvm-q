@@ -1,29 +1,29 @@
-﻿namespace MVVM.ViewSourceGenerators.ViewSourceGenerators;
+﻿namespace ViewSourceGenerators.ViewSourceGenerators;
 
 public enum BindingMode
 {
-	/// <summary>
-	///     No binding
-	/// </summary>
-	None,
+    /// <summary>
+    ///     No binding
+    /// </summary>
+    None,
 
-	/// <summary>
-	///     源 => 目标
-	/// </summary>
-	OneWay,
+    /// <summary>
+    ///     source => target
+    /// </summary>
+    OneWay,
 
-	/// <summary>
-	///     源 <=> 目标
-	/// </summary>
-	TwoWay,
+    /// <summary>
+    ///     source <=> target
+    /// </summary>
+    TwoWay,
 
-	/// <summary>
-	///     源 => 目标 仅初始化一次
-	/// </summary>
-	OneTime,
+    /// <summary>
+    ///     source => target, but only once
+    /// </summary>
+    OneTime,
 
-	/// <summary>
-	///     源 <= 目标
-	/// </summary>
-	OneWayToSource
+    /// <summary>
+    ///     Source <= Target
+    /// </summary>
+    OneWayToSource
 }
